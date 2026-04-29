@@ -1,0 +1,11 @@
+Package: TaxStandR
+Title: Obtain the classification information of species names
+Version: 0.0.1
+Authors@R: 
+    person("维锴", "谭", , "15907899616@163.com", role = c("aut", "cre"))
+Description: Clean the species names, handle common spelling mistakes and format issues, and obtain the superior classification order.
+License: GPL-3 
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports: taxize, stringr, stringi, purrr, tidyr, dplyr, writexl
