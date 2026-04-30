@@ -4,12 +4,13 @@ library(TaxStandR)
 library(stringr)
 library(dplyr)
 library(openxlsx)
+library(writexl)
 
 # devtools::document() # 更新修改后的包
 # devtools::build() # 输出包为.tar.gz格式文件
 # Ctrl + Shift + B # 重新打包安装
 # https://chat.deepseek.com/share/zb8y09hqhjfjfqih06  (上传Github的方法)
-# devtools::install_github("Dennis-twk/TaxStandR")
+# devtools::install_github("Dennis-twk/TaxStandR") 或者 pak::pak("Dennis-twk/TaxStandR")
 
 # NCBI数据库载入密钥可以加快检索速度，注意不能有空格，Sys.getenv("ENTREZ_KEY")替换为: "你的密钥"
 ## NCBI密钥获取链接： https://ncbiinsights.ncbi.nlm.nih.gov/2017/11/02/new-api-keys-for-the-e-utilities/

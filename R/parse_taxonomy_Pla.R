@@ -25,13 +25,15 @@ parse_taxonomy_Pla <- function(class_obj, db_name = "NCBI") {
   target_ranks <- c("kingdom", "phylum", "class", "order", "family", "genus", "species")
   parsed_df <- imap_dfr(class_obj, function(df, taxid) {
     # 错误与空值拦截：如果这个物种分类树没查到（是 NULL 或 NA）
-    if (is.null(df) || (length(df) == 1 && is.na(df))) return(data.frame(taxid = taxid, stringsAsFactors = FALSE))
+    if (is.null(df) || (length(df) == 1 && is.na(df)))
+      return(data.frame(taxid = taxid, stringsAsFactors = FALSE))
     # 数据长宽转换
     df_wide <- df %>% select(name, rank) %>% filter(rank %in% target_ranks) %>%
       distinct(rank, .keep_all = TRUE) %>% pivot_wider(names_from = rank, values_from = name)
     # 强制列名对齐
     for (col in target_ranks) if (!col %in% names(df_wide)) df_wide[[col]] <- NA
-    df_wide$taxid <- taxid; return(df_wide) # 贴上它对应的身份证号（taxid）
+    df_wide$taxid <- taxid
+    return(df_wide) # 贴上它对应的身份证号（taxid）
   })
   # 贴上数据库前缀标签
   rename_mapping <- setNames(target_ranks, paste0(db_name, ".", target_ranks))

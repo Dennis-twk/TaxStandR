@@ -123,10 +123,6 @@ search_bold_Pla <- function(raw_names) {
     }
     close(pb_man)
 
-    if(nrow(df_auto_recovered) > 0) {
-      cat(sprintf("\n[ BOLD 自动找回 ] 已智能识别并跳过 %d 个物种！\n", nrow(df_auto_recovered)))
-    }
-
     # 剩下真正需要人工介入的打印
     if(length(cands_list) > 0) {
       cat(sprintf("\n【BOLD 人工复核】 仍有 %d 个物种存在歧义或拼写差异，需人工确认：\n", length(cands_list)))
@@ -208,21 +204,20 @@ search_bold_Pla <- function(raw_names) {
 
   cat("  => 已通过【BOLD】完成植物分类信息提取的检索！\n")
 
-  # # 加入文件防占用保护机制
-  # save_path <- 'output/BOLD_full_results_Pla.xlsx'
-  # tryCatch({
-  #   writexl::write_xlsx(res_final, save_path)
-  #   cat(sprintf("\n【 BOLD 完成 】 单库记录已成功保存至: %s\n", save_path))
-  #
-  # }, error = function(e) {
-  #   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-  #   fallback_path <- sprintf('output/BOLD_full_results_Pla_backup_%s.xlsx', timestamp)
-  #   writexl::write_xlsx(res_final, fallback_path)
-  #   cat("\n====================== [ 警告 ] ======================\n")
-  #   cat("检测到目标 Excel 文件正在被打开（如被锁定），无法覆盖！\n")
-  #   cat(sprintf("为了防止数据丢失，结果已自动另存为备用文件:\n  --> %s\n", fallback_path))
-  #   cat("========================================================\n")
-  # })
+  save_path <- 'output/BOLD_full_results_Pla.xlsx'
+  tryCatch({
+    writexl::write_xlsx(res_final, save_path)
+    cat(sprintf("\n【 BOLD 完成 】 单库记录已成功保存至: %s\n", save_path))
+
+  }, error = function(e) {
+    timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+    fallback_path <- sprintf('output/BOLD_full_results_Pla_backup_%s.xlsx', timestamp)
+    writexl::write_xlsx(res_final, fallback_path)
+    cat("\n====================== 【 警告 】 ======================\n")
+    cat("检测到目标 Excel 文件正在被打开（如被锁定），无法覆盖！\n")
+    cat(sprintf("为了防止数据丢失，结果已自动另存为备用文件:\n  --> %s\n", fallback_path))
+    cat("========================================================\n")
+  })
 
   return(res_final)
 }

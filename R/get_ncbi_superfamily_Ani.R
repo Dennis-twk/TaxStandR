@@ -21,14 +21,18 @@
 get_ncbi_superfamily_Ani <- function(family_vector) {
   family_vector <- unique(family_vector[!is.na(family_vector)]) # 剔除输入向量中的 NA 值，并对科名进行去重，减少不必要的重复 API 请求
   # 防崩溃保护：如果过滤后发现全是 NA 或输入为空，直接返回标准的空数据框，避免后续报错
-  if(length(family_vector) == 0) return(data.frame(family = character(), NCBI.superfamily = character()))
+  if(length(family_vector) == 0)
+    return(data.frame(family = character(), NCBI.superfamily = character()))
   # capture.output() 用于拦截底层 taxize 包产生的冗余打印输出，保持控制台整洁
   # 调用自定义的 auto_retry，静默地 (ask=FALSE, messages=FALSE) 批量获取这些科名的 NCBI UID
-  capture.output({ ids_superfamily <- auto_retry({ suppressWarnings(suppressMessages(taxize::get_uid(family_vector, ask = FALSE, messages = FALSE))) }) })
+  capture.output({ ids_superfamily <- auto_retry({ suppressWarnings(
+    suppressMessages(taxize::get_uid(family_vector, ask = FALSE, messages = FALSE))) }) })
   # 网络崩溃或API失效时的保底机制：将返回结果强行转换为等长的 NA 向量，保证数据结构不乱
-  if(is.null(ids_superfamily)) ids_superfamily <- rep(NA, length(family_vector))
+  if(is.null(ids_superfamily))
+    ids_superfamily <- rep(NA, length(family_vector))
   # 构建“科名-ID”的映射关系表
-  out_id <- data.frame(family = family_vector, ncbi.taxid = as.character(ids_superfamily)) %>% filter(!is.na(ncbi.taxid))
+  out_id <- data.frame(family = family_vector, ncbi.taxid = as.character(ids_superfamily)) %>%
+    filter(!is.na(ncbi.taxid))
   # 提取分类信息并剥离出“总科”
   if(nrow(out_id) > 0) {
     classf <- safe_classification(out_id$ncbi.taxid, 'ncbi') # 调用自定义安全函数批量拉取完整的 NCBI 分类树信息 (List 格式)

@@ -207,21 +207,20 @@ search_bold_Ani <- function(raw_names) {
               superfamily = NCBI.superfamily, family = BOLD.family, genus = BOLD.genus, species = BOLD.species, source)
   cat("  => 已通过【BOLD】完成包含总科在内的分类信息的检索！\n")
 
-   # # --- 第五轮：文件保存与防崩溃保护机制 ---
-  # save_path <- 'output/BOLD_results_Ani.xlsx'
-  # tryCatch({
-  #   writexl::write_xlsx(res_final, save_path)
-  #   cat(sprintf("【 BOLD 完成 】 单库记录已成功保存至: %s\n", save_path))
-  #
-  # }, error = function(e) {
-  #   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-  #   fallback_path <- sprintf('output/BOLD_results_Ani_backup_%s.xlsx', timestamp)
-  #   writexl::write_xlsx(res_final, fallback_path)
-  #   cat("\n====================== 【 警告 】 ======================\n")
-  #   cat("检测到目标 Excel 文件正在被打开（如被锁定），无法覆盖！\n")
-  #   cat(sprintf("为了防止数据丢失，结果已自动另存为备用文件:\n  --> %s\n", fallback_path))
-  #   cat("========================================================\n")
-  # })
+  save_path <- 'output/BOLD_results_Ani.xlsx'
+  tryCatch({
+    writexl::write_xlsx(res_final, save_path)
+    cat(sprintf("【 BOLD 完成 】 单库记录已成功保存至: %s\n", save_path))
+
+  }, error = function(e) {
+    timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+    fallback_path <- sprintf('output/BOLD_results_Ani_backup_%s.xlsx', timestamp)
+    writexl::write_xlsx(res_final, fallback_path)
+    cat("\n====================== 【 警告 】 ======================\n")
+    cat("检测到目标 Excel 文件正在被打开（如被锁定），无法覆盖！\n")
+    cat(sprintf("为了防止数据丢失，结果已自动另存为备用文件:\n  --> %s\n", fallback_path))
+    cat("========================================================\n")
+  })
 
   return(res_final)
 }

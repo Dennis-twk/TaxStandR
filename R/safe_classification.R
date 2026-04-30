@@ -26,7 +26,8 @@
 safe_classification <- function(taxids, db) {
   taxids <- unique(taxids[!is.na(taxids) & taxids != "NA"])
   res_list <- list()
-  if(length(taxids) == 0) return(res_list)
+  if(length(taxids) == 0)
+    return(res_list)
   # 进度条初始化
   cat(sprintf("  => 正在获取分类信息（共 %d 项）...\n", length(taxids)))
   pb <- txtProgressBar(min = 0, max = length(taxids), style = 3)

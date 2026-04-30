@@ -21,7 +21,8 @@ auto_retry <- function(code_block, max_attempts = 4, sleep_sec = 2) {
   expr <- substitute(code_block); env <- parent.frame()
   for (i in 1:max_attempts) {
     res <- tryCatch({ eval(expr, envir = env) }, error = function(e) e)
-    if (!inherits(res, "error")) return(res)
+    if (!inherits(res, "error"))
+      return(res)
     if (i < max_attempts) {
       cat(sprintf("\n【警告】 API 请求报错: %s。将在 %d 秒后进行重试...\n", conditionMessage(res), sleep_sec))
       Sys.sleep(sleep_sec) # Sys.sleep 强制让 R 程序进入休眠（挂起）状态。

@@ -35,8 +35,10 @@ search_ncbi_Ani <- function(raw_names) {
   # --- 第一轮：自动严格检索 ---
   pb <- txtProgressBar(min = 0, max = length(search_list), style = 3)
   ids_list <- lapply(seq_along(search_list), function(i) {
-    res <- auto_retry({ suppressWarnings(suppressMessages(taxize::get_uid(search_list[i], ask = FALSE, messages = FALSE))) })
-    setTxtProgressBar(pb, i); return(res)
+    res <- auto_retry({ suppressWarnings(
+      suppressMessages(taxize::get_uid(search_list[i], ask = FALSE, messages = FALSE))) })
+    setTxtProgressBar(pb, i)
+    return(res)
   })
   close(pb); cat("\n")
 
@@ -48,8 +50,10 @@ search_ncbi_Ani <- function(raw_names) {
 
   df_missing <- out_id %>% filter(is.na(taxid))
 
-  df_auto_recovered <- data.frame(preprocessed.name=character(), taxid=character(), stringsAsFactors=FALSE)
-  df_manual_pass <- data.frame(preprocessed.name=character(), taxid=character(), stringsAsFactors=FALSE)
+  df_auto_recovered <- data.frame(
+    preprocessed.name=character(), taxid=character(), stringsAsFactors=FALSE)
+  df_manual_pass <- data.frame(
+    preprocessed.name=character(), taxid=character(), stringsAsFactors=FALSE)
 
   # --- 第二轮：深度检索与自动/人工复核 ---
   if(nrow(df_missing) > 0) {
@@ -78,7 +82,8 @@ search_ncbi_Ani <- function(raw_names) {
 
     for(i in 1:nrow(df_missing)) {
       sp <- df_missing$preprocessed.name[i]
-      res <- auto_retry({ suppressWarnings(suppressMessages(taxize::get_uid_(sp, messages = FALSE)[[1]])) })
+      res <- auto_retry({ suppressWarnings(
+        suppressMessages(taxize::get_uid_(sp, messages = FALSE)[[1]])) })
 
       auto_picked <- FALSE
       if(is.data.frame(res) && nrow(res) > 0) {
@@ -93,7 +98,9 @@ search_ncbi_Ani <- function(raw_names) {
             sp_norm <- norm_name(sp)
             cand_names <- res$scientificname
 
-            match_cond <- (norm_name(cand_names) == sp_norm | startsWith(norm_name(cand_names), paste0(sp_norm, " ")))
+            match_cond <-
+              (norm_name(cand_names) == sp_norm | startsWith(norm_name(cand_names),
+                                                             paste0(sp_norm, " ")))
             match_cond[is.na(match_cond)] <- FALSE # 处理潜在的 NA，防止逻辑报错
 
             exact_matches <- res[match_cond, , drop = FALSE]
@@ -101,7 +108,8 @@ search_ncbi_Ani <- function(raw_names) {
             if(nrow(exact_matches) > 0) {
               # 提取 NCBI 的唯一标识符 uid
               best_id <- exact_matches$uid[1]
-              df_auto_recovered <- rbind(df_auto_recovered, data.frame(preprocessed.name = sp, taxid = as.character(best_id), stringsAsFactors = FALSE))
+              df_auto_recovered <- rbind(
+                df_auto_recovered, data.frame(preprocessed.name = sp, taxid = as.character(best_id), stringsAsFactors = FALSE))
               auto_picked <- TRUE
             }
           }
@@ -188,23 +196,23 @@ search_ncbi_Ani <- function(raw_names) {
               superfamily = NCBI.superfamily, family = NCBI.family, genus = NCBI.genus, species = NCBI.species, source)
   cat("  => 已通过【NCBI】完成包含总科在内的分类信息的检索！\n")
 
-  # save_path <- 'output/NCBI_results_Ani.xlsx'
-  #
-  # tryCatch({
-  #   writexl::write_xlsx(res_final, save_path)
-  #   cat(sprintf("【 NCBI 完成 】 单库记录已成功保存至: %s\n", save_path))
-  #
-  # }, error = function(e) {
-  #   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-  #   fallback_path <- sprintf('output/NCBI_results_Ani_backup_%s.xlsx', timestamp)
-  #
-  #   writexl::write_xlsx(res_final, fallback_path)
-  #
-  #   cat("\n====================== 【 警告 】 ======================\n")
-  #   cat("检测到目标 Excel 文件正在被打开（如被锁定），无法覆盖！\n")
-  #   cat(sprintf("为了防止数据丢失，结果已自动另存为备用文件:\n  --> %s\n", fallback_path))
-  #   cat("========================================================\n")
-  # })
+  save_path <- 'output/NCBI_results_Ani.xlsx'
+
+  tryCatch({
+    writexl::write_xlsx(res_final, save_path)
+    cat(sprintf("【 NCBI 完成 】 单库记录已成功保存至: %s\n", save_path))
+
+  }, error = function(e) {
+    timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+    fallback_path <- sprintf('output/NCBI_results_Ani_backup_%s.xlsx', timestamp)
+
+    writexl::write_xlsx(res_final, fallback_path)
+
+    cat("\n====================== 【 警告 】 ======================\n")
+    cat("检测到目标 Excel 文件正在被打开（如被锁定），无法覆盖！\n")
+    cat(sprintf("为了防止数据丢失，结果已自动另存为备用文件:\n  --> %s\n", fallback_path))
+    cat("========================================================\n")
+  })
 
   return(res_final)
 }
