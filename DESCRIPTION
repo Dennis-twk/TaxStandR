@@ -9,3 +9,5 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports: taxize, stringr, stringi, purrr, tidyr, dplyr, writexl
+URL: https://github.com/Dennis-twk/TaxStandR
+BugReports: https://github.com/Dennis-twk/TaxStandR/issues
