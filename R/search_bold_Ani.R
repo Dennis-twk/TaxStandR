@@ -22,7 +22,7 @@
 
 
 search_bold_Ani <- function(raw_names) {
-  cat("\n 开始执行 BOLD 数据库检索 (昆虫) \n")
+  cat("\n 开始执行 BOLD 数据库检索 (动物) \n")
   # 移除可能存在的 XML 残留标签
   raw_names <- str_remove(raw_names, '^xml:space="preserve">')
   # 调用本包的预处理函数
